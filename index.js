@@ -13,8 +13,9 @@ app.get('/health-check', (req, res) => {
 
 app.post('/seo-tools/:type', async (req, res) => {
     try {
-        const resp = await seoToolsController({data: req.body, type: _.get(req, 'params.type', 'all')});
-        return res.send({type: 'keyword-analyse', data: resp});
+        const type = _.get(req, 'params.type', 'all');
+        const resp = await seoToolsController({data: req.body, type});
+        return res.send({type, data: resp});
     } catch (e) {
         return res.send({error: e.message, stack: e.stack})
     }

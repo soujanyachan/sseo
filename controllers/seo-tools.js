@@ -24,7 +24,8 @@ const getHTMLParsedDataFromUrl = async ({url}) => {
 }
 
 const getTextDataFromHtml = async ({htmlRoot}) => {
-    const dummyText = 'The best things in an artist’s work are so much a matter of intuition, that there is much to be said for the point of view that would altogether discourage intellectual inquiry into artistic phenomena on the part of the artist. Intuitions are shy things and apt to disappear if looked into too closely. And there is undoubtedly a danger that too much knowledge and training may supplant the natural intuitive feeling of a student, leaving only a cold knowledge of the means of expression in its place. For the artist, if he has the right stuff in him ... ';
+    const dummyText =
+        'The best things in an artist’s work are so much a matter of intuition, that there is much to be said for the point of view that would altogether discourage intellectual inquiry into artistic phenomena on the part of the artist. Intuitions are shy things and apt to disappear if looked into too closely. And there is undoubtedly a danger that too much knowledge and training may supplant the natural intuitive feeling of a student, leaving only a cold knowledge of the means of expression in its place. For the artist, if he has the right stuff in him ... ';
     return dummyText;
 }
 
@@ -33,7 +34,6 @@ const seoToolsController = async ({data, type}) => {
         // get html data
         const url = _.get(data, 'url');
         const root = await getHTMLParsedDataFromUrl({url});
-        console.log(root);
         const textData = await getTextDataFromHtml({root});
         // based on incoming req, apply transformations
         if (type === 'all') {

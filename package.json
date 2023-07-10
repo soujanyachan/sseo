@@ -17,6 +17,7 @@
     "express": "^4.18.2",
     "lodash": "^4.17.21",
     "natural": "^6.5.0",
-    "node-html-parser": "^6.1.5"
+    "node-html-parser": "^6.1.5",
+    "yaml": "^2.3.1"
   }
 }
