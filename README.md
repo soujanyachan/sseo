@@ -1,5 +1,6 @@
 This project is an optimizer for blog posts which takes a URL as input, embeds it in an iframe and checks and displays many SEO related metrics like readability, SERP preview, keywords, suggested optimisations, and also some AI-generated similar blog posts.
 
+![sample of ui 1](https://github.com/soujanyachan/sseo/blob/master/ui1.png?raw=true)
 ![sample of ui 2](https://github.com/soujanyachan/sseo/blob/master/ui2.png?raw=true)
 
 Implemented features:
