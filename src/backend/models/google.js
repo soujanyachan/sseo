@@ -1,10 +1,8 @@
 const axios = require("axios");
 const _ = require("lodash");
-const YAML = require("yaml");
-const fs = require("fs");
 
-const file = fs.readFileSync('../../config.yaml', 'utf8')
-const yamlConfig = YAML.parse(file)
+const baseconfig = require('../config');
+const yamlConfig = baseconfig;
 
 const googleMobileFriendlyTest = async (url) => {
     let data = JSON.stringify({

@@ -51,6 +51,8 @@ const seoScore = ({input}) => {
     const doesHeadContainMeta = _.get(input, '["optimise-page"].doesHeadContainMeta')
     const isMobileFriendly = _.get(input, '["optimise-page"].isMobileFriendly')
     const isAscii = _.get(input, '["optimise-page"].isAscii')
+    const pcInternalLinks = _.get(input, '["optimise-page"].internalLinks.pcInternalLinks')
+    const pcWithoutAlt = _.get(input, '["optimise-page"].altTags.pcWithoutAlt')
     const containsUnderscores = _.get(input, '["optimise-page"].containsUnderscores')
     const loadingExperience = _.get(input, '["optimise-page"].pageSpeed.loadingExperience')
     const performanceScore = _.get(input, '["optimise-page"].pageSpeed.performanceScore')
@@ -96,8 +98,14 @@ const seoScore = ({input}) => {
     if (automatedReadabilityIndex) {
         score += normalize(automatedReadabilityIndex, 1,0)
     }
+    if (pcInternalLinks) {
+        score += normalize(pcInternalLinks, 1,0)
+    }
+    if (pcWithoutAlt) {
+        score += normalize(pcWithoutAlt, 1,0)
+    }
     console.log(score);
-    return score;
+    return score/12;
 }
 
 const seoToolsController = async ({data, type}) => {

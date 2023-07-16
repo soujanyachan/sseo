@@ -4,6 +4,7 @@ const _ = require('lodash')
 var bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const {seoToolsController} = require("./controllers/seo-tools");
+const baseconfig = require('./config');
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', "*");

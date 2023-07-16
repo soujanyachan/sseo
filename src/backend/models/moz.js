@@ -1,10 +1,8 @@
 const axios = require('axios');
-const YAML = require('yaml')
-const fs = require('fs');
 const _ = require('lodash')
 
-const file = fs.readFileSync('../../config.yaml', 'utf8')
-const yamlConfig = YAML.parse(file)
+const baseconfig = require('../config');
+const yamlConfig = baseconfig;
 
 const auth = Buffer.from(`${yamlConfig.MOZ_ACCESS_ID}:${yamlConfig.MOZ_SECRET_KEY}`).toString('base64');
 
