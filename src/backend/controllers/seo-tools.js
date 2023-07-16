@@ -105,7 +105,7 @@ const seoScore = ({input}) => {
         score += normalize(pcWithoutAlt, 1,0)
     }
     console.log(score);
-    return score/12;
+    return score*100/12;
 }
 
 const seoToolsController = async ({data, type}) => {
