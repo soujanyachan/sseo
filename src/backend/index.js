@@ -3,9 +3,17 @@ const app = express();
 const _ = require('lodash')
 const htmlParser = require('node-html-parser');
 const axios = require('axios')
+var bodyParser = require('body-parser')
+app.use(bodyParser.json())
 const {seoToolsController} = require("./controllers/seo-tools");
 
-app.use(express.json({limit: '50mb'}));
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', "*");
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', "true");
+    return next();
+});
 
 app.get('/health-check', (req, res) => {
     res.send('hello world')

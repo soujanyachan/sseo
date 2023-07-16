@@ -3,7 +3,7 @@ const YAML = require('yaml')
 const fs = require('fs');
 const _ = require('lodash')
 
-const file = fs.readFileSync('./config.yaml', 'utf8')
+const file = fs.readFileSync('../../config.yaml', 'utf8')
 const yamlConfig = YAML.parse(file)
 
 const auth = Buffer.from(`${yamlConfig.MOZ_ACCESS_ID}:${yamlConfig.MOZ_SECRET_KEY}`).toString('base64');

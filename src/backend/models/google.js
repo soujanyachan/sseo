@@ -3,7 +3,7 @@ const _ = require("lodash");
 const YAML = require("yaml");
 const fs = require("fs");
 
-const file = fs.readFileSync('./config.yaml', 'utf8')
+const file = fs.readFileSync('../../config.yaml', 'utf8')
 const yamlConfig = YAML.parse(file)
 
 const googleMobileFriendlyTest = async (url) => {

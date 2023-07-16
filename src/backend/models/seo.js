@@ -11,8 +11,7 @@ const analyseKeyword = async ({data, textData, root}) => {
     return resp;
 };
 
-const optimisePage = async ({data, textData, root}) => {
-    const url = _.get(data, 'url');
+const optimisePage = async ({data, textData, root, url}) => {
     const isRobotsTxt = await checkIsRobotsTxt(url)
     const doesHeadContainTitle = root.querySelector('head').structure.includes("title");
     const doesHeadContainMeta = root.querySelector('head').structure.includes("meta");

@@ -29,12 +29,18 @@ const getTextDataFromHtml = async ({htmlRoot}) => {
 const seoToolsController = async ({data, type}) => {
     try {
         // get html data
-        const url = _.get(data, 'url');
+        const url = _.get(data, 'body.url');
         const root = await getHTMLParsedDataFromUrl({url});
         const textData = await getTextDataFromHtml({root});
         // based on incoming req, apply transformations
         if (type === 'all') {
-
+            const totalRes = {};
+            for (const type in typeFunctionMap) {
+                const respData = await typeFunctionMap[type]({data, textData, root, url});
+                console.log(`type ${type}: ${JSON.stringify(respData)}`);
+                totalRes[type] = respData;
+            }
+            return totalRes;
         } else if (allowedTypes.includes(type)) {
             const respData = await typeFunctionMap[type]({data, textData, root});
             console.log(`type ${type}: ${JSON.stringify(respData)}`);

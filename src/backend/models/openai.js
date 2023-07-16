@@ -3,7 +3,7 @@ const YAML = require('yaml')
 const fs = require('fs');
 const _ = require('lodash')
 
-const file = fs.readFileSync('./config.yaml', 'utf8')
+const file = fs.readFileSync('../../config.yaml', 'utf8')
 const yamlConfig = YAML.parse(file)
 
 let config = {
@@ -37,8 +37,8 @@ const getKeywordsFromText = async ({textData}) => {
         const response = await axios.request(config)
         console.log(JSON.stringify(response.data));
         const data = _.get(response, 'data.choices.0.message.content', "{}");
-        const {keywords, alternateKeys, blogPosts} = JSON.parse(data);
-        return {keywords, alternateKeys, blogPosts};
+        const {keywords, alternateKeywords, blogPosts} = JSON.parse(data);
+        return {keywords, alternateKeywords, blogPosts};
     } catch (e) {
         console.log(e);
     }
