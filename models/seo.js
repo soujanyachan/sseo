@@ -51,24 +51,15 @@ const analyseContent = async ({data, textData, root}) => {
 const seoScore = async ({data, textData, root}) => {
 };
 
-const analyseCompetitor = async ({data, textData, root}) => {
-};
-
 const serpPreview = async ({data, textData, root}) => {
 };
-const analyseBacklinks = async ({data, textData, root}) => {
-};
-const rankKeywords = async ({data, textData, root}) => {
-};
+
 const checkDomainAuthority = async ({data, textData, root}) => {
 };
 
 module.exports = {
     analyseKeyword,
-    analyseBacklinks,
     analyseContent,
-    analyseCompetitor,
-    rankKeywords,
     checkDomainAuthority,
     seoScore,
     serpPreview,

@@ -8,10 +8,7 @@ const typeFunctionMap = {
     'optimise-page': seoModel.optimisePage,
     'analyse-content': seoModel.analyseContent,
     'seo-score': seoModel.seoScore,
-    'analyse-competitors': seoModel.analyseCompetitor,
     'serp-preview': seoModel.serpPreview,
-    'analyse-backlinks': seoModel.analyseBacklinks,
-    'rank-keywords': seoModel.rankKeywords,
     'check-domain-authority': seoModel.checkDomainAuthority
 }
 

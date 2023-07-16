@@ -18,6 +18,7 @@
     "lodash": "^4.17.21",
     "natural": "^6.5.0",
     "node-html-parser": "^6.1.5",
+    "react-serp-preview": "^1.1.0",
     "yaml": "^2.3.1"
   }
 }
