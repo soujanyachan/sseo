@@ -7,7 +7,7 @@ import {red, green} from '@ant-design/colors';
 
 // Component to display SEO score
 const SeoScore = ({score}) => {
-    const pc = Math.floor(score * 10);
+    const pc = Math.floor(score);
     return (
         <div><h2>SEO Score</h2> <Progress type="circle" percent={pc} format={(percent) => `${percent}`} strokeColor={{
             '0%': '#108ee9',
