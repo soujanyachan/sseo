@@ -38,25 +38,16 @@ Task
 
 
 - talk about for other languages but only do for english.
-- 
 
-https://github.com/search?q=seo+tools+language%3APython&type=repositories&p=4&l=Python
-https://github.com/ksmylmz/Python-Pyseodon
-https://github.com/isaiahbjork/Auto-GPT-Google-Analytics-Plugin
-https://github.com/dinokukic/seo-tools-cli/blob/main/redirects.py
+Format
+  Important files, pdf, resources used and ppt
+  Source code zip file
+  Video and demo of the project
+  Project description with details on which task is executed
+
+
 https://www.peppercontent.io/peppertype-ai/
 https://www.copy.ai/bloggers
 https://serpapi.com/search-api
 https://stackoverflow.com/questions/68546858/extract-main-text-from-any-webpage-using-beautifulsoup-and-python
 https://moz.com/help/domain-overview/introduction#summary
-https://github.com/taoqf/node-html-parser
-https://moz.com/help/keyword-explorer/explore-by-keyword/keyword-suggestions
-https://www.npmjs.com/package/node-html-parser
-
-
-
-Format
-    Important files, pdf, resources used and ppt
-    Source code zip file
-    Video and demo of the project
-    Project description with details on which task is executed

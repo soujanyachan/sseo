@@ -3,6 +3,7 @@ nlp.plugin(require('compromise-speech'));
 const _ = require('lodash');
 const axios = require('axios');
 const {getKeywordsFromText} = require("./openai");
+const {googleMobileFriendlyTest, checkIsRobotsTxt, siteMap, checkUrlStructure} = require("./google");
 
 const analyseKeyword = async ({data, textData, root}) => {
     // call open ai apis to get keyword.
@@ -12,22 +13,14 @@ const analyseKeyword = async ({data, textData, root}) => {
 
 const optimisePage = async ({data, textData, root}) => {
     const url = _.get(data, 'url');
-    let isRobotsTxt = false;
-    try {
-        const baseUrl = getBaseUrl(url);
-        const resp = await axios.post(`https://${baseUrl}/robots.txt`);
-        isRobotsTxt = true;
-    } catch (e) {
-
-    }
+    const isRobotsTxt = await checkIsRobotsTxt(url)
     const doesHeadContainTitle = root.querySelector('head').structure.includes("title");
     const doesHeadContainMeta = root.querySelector('head').structure.includes("meta");
-    // sitemap check
-    // URL structure - https://developers.google.com/search/docs/crawling-indexing/url-structure
-    // image tags, https://developers.google.com/search/docs/appearance/google-images
-    // internal linking
-    // https://github.com/mozilla/readability
+    const {isMobileFriendly} = await googleMobileFriendlyTest(url);
+    // const siteMapCheck = await siteMap(url)
+    const urlStructure = await checkUrlStructure(url);
 
+    return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure}
 };
 
 const analyseContent = async ({data, textData, root}) => {
@@ -38,7 +31,7 @@ const analyseContent = async ({data, textData, root}) => {
     let arr = doc.json().map(o => {
         const sentence = nlp(o.text);
         console.log(sentence, sentence.terms(), sentence.terms().syllables());
-        const sentenceSyllableLength = _.reduce(sentence.terms().syllables(), function(sum, n) {
+        const sentenceSyllableLength = _.reduce(sentence.terms().syllables(), function (sum, n) {
             const charsInSyllables = _.reduce(n, (sum, x) => sum + x.length, 0);
             totalNumOfChars += charsInSyllables;
             return sum + n.length;
@@ -47,10 +40,10 @@ const analyseContent = async ({data, textData, root}) => {
         return o.text;
     })
     const totalNumOfSentences = doc.length;
-    const avgSentenceLength = totalNumOfWords/totalNumOfSentences;
-    const avgSyllablesPerWord = totalNumOfSyllables/totalNumOfWords;
+    const avgSentenceLength = totalNumOfWords / totalNumOfSentences;
+    const avgSyllablesPerWord = totalNumOfSyllables / totalNumOfWords;
     const fleschReadability = 206.835 - (1.015 * avgSentenceLength) - (84.6 * avgSyllablesPerWord);
-    const automatedReadabilityIndex = 4.71 * (totalNumOfChars/totalNumOfWords) + 0.5*(totalNumOfWords/totalNumOfSentences) -21.43;
+    const automatedReadabilityIndex = 4.71 * (totalNumOfChars / totalNumOfWords) + 0.5 * (totalNumOfWords / totalNumOfSentences) - 21.43;
     console.log(arr, avgSentenceLength, avgSyllablesPerWord, fleschReadability, automatedReadabilityIndex, "sentences");
     return {fleschReadability, automatedReadabilityIndex}
 };
