@@ -2,6 +2,7 @@ const _ = require("lodash");
 const axios = require("axios");
 const htmlParser = require("node-html-parser");
 const seoModel = require("../models/seo")
+const {JSDOM} = require("jsdom");
 
 const typeFunctionMap = {
     'analyse-keyword': seoModel.analyseKeyword,
@@ -14,8 +15,20 @@ const allowedTypes = _.keys(typeFunctionMap);
 
 const getHTMLParsedDataFromUrl = async ({url}) => {
     const resp = await axios.get(url);
-    const root = htmlParser.parse(resp.data);
-    return {root, plainHtml: resp.data};
+    const plainHtml = resp.data;
+    const root = htmlParser.parse(plainHtml);
+    const hrefUrls = [];
+    const imageUrls = [];
+    const doc = new JSDOM(plainHtml);
+    const links = doc.window.document.getElementsByTagName("a");
+    for(let i=0, max=links.length; i<max; i++) {
+        hrefUrls.push(links[i].href);
+    }
+    const images = doc.window.document.getElementsByTagName("img");
+    for(let i=0, max=images.length; i<max; i++) {
+        imageUrls.push({src: images[i].src, alt: images[i].alt});
+    }
+    return {root, plainHtml, hrefUrls, imageUrls};
 }
 
 const getTextDataFromHtml = async ({plainHtml}) => {
@@ -91,13 +104,13 @@ const seoToolsController = async ({data, type}) => {
     try {
         // get html data
         const url = _.get(data, 'body.url');
-        const {root, plainHtml} = await getHTMLParsedDataFromUrl({url});
+        const {root, plainHtml, hrefUrls, imageUrls} = await getHTMLParsedDataFromUrl({url});
         const {textData, title, excerpt} = await getTextDataFromHtml({htmlRoot: root, plainHtml});
         // based on incoming req, apply transformations
         if (type === 'all') {
             const totalRes = {};
             for (const type in typeFunctionMap) {
-                const respData = await typeFunctionMap[type]({data, textData, root, url, title, excerpt});
+                const respData = await typeFunctionMap[type]({data, textData, root, url, title, excerpt, hrefUrls, imageUrls});
                 console.log(`type ${type}: ${JSON.stringify(respData)}`);
                 totalRes[type] = respData;
             }

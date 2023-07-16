@@ -2,15 +2,17 @@
 import React from 'react';
 import _ from 'lodash';
 import SerpPreview from 'react-serp-preview';
-import { Tag, Progress } from 'antd';
+import {Tag, Progress} from 'antd';
+import {red, green} from '@ant-design/colors';
 
 // Component to display SEO score
 const SeoScore = ({score}) => {
-    const pc = Math.floor(score*10);
-    return (<div><h2>SEO Score</h2> <Progress type="circle" percent={pc} format={(percent) => `${percent}`} strokeColor={{
-        '0%': '#108ee9',
-        '100%': '#87d068',
-    }} size="small" style={{marginBottom: "10px"}} /></div>)
+    const pc = Math.floor(score * 10);
+    return (
+        <div><h2>SEO Score</h2> <Progress type="circle" percent={pc} format={(percent) => `${percent}`} strokeColor={{
+            '0%': '#108ee9',
+            '100%': '#87d068',
+        }} size="small" style={{marginBottom: "10px"}}/></div>)
 }
 
 // Component for SERP preview
@@ -23,7 +25,7 @@ const Serp = ({title = "", metaDescription = "", url}) => (
 
 const pickRandomColor = () => {
     const colors = ["magenta", "red", "volcano", "orange", "gold", "lime", "green", "cyan", "blue", "geekblue", "purple"]
-    return colors[_.random(0, colors.length-1)];
+    return colors[_.random(0, colors.length - 1)];
 }
 
 // Component to display Keywords
@@ -49,8 +51,10 @@ const AltKeywords = ({altKeywords}) => {
 // Component to display PageSpeed
 const PageSpeed = ({speed}) => (
     <div>
-        <p>Loading experience <Tag color={`${speed.loadingExperience === 'FAST' ? 'green' : 'red'}`}>{speed.loadingExperience}</Tag></p>
-        <p>Performance score <Tag color={`${speed.performanceScore >= 0.75 ? 'green' : 'red'}`}>{speed.performanceScore}</Tag></p>
+        <p>Loading experience <Tag
+            color={`${speed.loadingExperience === 'FAST' ? 'green' : 'red'}`}>{speed.loadingExperience}</Tag></p>
+        <p>Performance score <Tag
+            color={`${speed.performanceScore >= 0.75 ? 'green' : 'red'}`}>{speed.performanceScore}</Tag></p>
     </div>
 );
 
@@ -60,7 +64,9 @@ const PageOpts = ({
                       doesHeadContainMeta,
                       isMobileFriendly,
                       isAscii,
-                      containsUnderscores
+                      containsUnderscores,
+                      altTags,
+                      internalLinks
                   }) => {
     const yesGood = <Tag color={"green"}>yes</Tag>
     const yesBad = <Tag color={"red"}>yes</Tag>
@@ -74,6 +80,14 @@ const PageOpts = ({
             <p>Is the page mobile friendly ? {isMobileFriendly ? yesGood : noBad}          </p>
             <p>Does the url contain only ASCII characters ? {isAscii ? yesGood : noBad} </p>
             <p>Does the url contain underscores? {containsUnderscores ? yesBad : noGood} </p>
+            <p>What percent of the pages images don't have alt tags? {
+                <Progress percent={altTags.pcWithoutAlt} steps={5} size="small" strokeColor={red[6]}
+                          format={(percent) => `${percent.toFixed(2)}%`}/>}
+            </p>
+            <p>What percent of the pages urls are internal links? {
+                <Progress percent={internalLinks.pcInternalLinks} steps={5} size="small" strokeColor={green[6]}
+                          format={(percent) => `${percent.toFixed(2)}%`}/>}
+            </p>
         </div>
     )
 }
@@ -107,7 +121,9 @@ const SEOPage = ({url, seoData}) => {
             isMobileFriendly,
             isAscii,
             containsUnderscores,
-            pageSpeed
+            pageSpeed,
+            altTags,
+            internalLinks
         } = optimisePage;
         const {fleschReadability, automatedReadabilityIndex} = analyseContent
         return (
@@ -129,7 +145,10 @@ const SEOPage = ({url, seoData}) => {
                           doesHeadContainMeta={doesHeadContainMeta}
                           isMobileFriendly={isMobileFriendly}
                           isAscii={isAscii}
-                          containsUnderscores={containsUnderscores}/>
+                          containsUnderscores={containsUnderscores}
+                          altTags={altTags}
+                          internalLinks={internalLinks}
+                />
                 <BlogPost blogPosts={blogPosts}/>
             </div>
         )

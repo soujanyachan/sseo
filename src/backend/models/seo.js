@@ -10,15 +10,36 @@ const analyseKeyword = async ({textData}) => {
     return resp;
 };
 
-const optimisePage = async ({root, url}) => {
+const checkInternalLinks = (hrefUrls) => {
+    const totalLinks = hrefUrls.length;
+    let internalLinks = 0;
+    for (const ahref of hrefUrls) {
+        const isLinkInternal = (ahref.indexOf('http://') !== 0 && ahref.indexOf('https://') !== 0)
+        if (isLinkInternal) internalLinks++;
+    }
+    return {pcInternalLinks: internalLinks/totalLinks * 100, totalLinks}
+}
+
+const checkAltTags = (imageUrls) => {
+    const totalImgs = imageUrls.length;
+    let withoutAltTags = 0;
+    for (const img of imageUrls) {
+        if (_.isEmpty(img.alt)) withoutAltTags++;
+    }
+    return {pcWithoutAlt: withoutAltTags/totalImgs * 100, totalImgs}
+}
+
+const optimisePage = async ({root, url, hrefUrls, imageUrls}) => {
     const isRobotsTxt = await checkIsRobotsTxt(url)
     const doesHeadContainTitle = root.querySelector('head').structure.includes("title");
     const doesHeadContainMeta = root.querySelector('head').structure.includes("meta");
     const {isMobileFriendly} = await googleMobileFriendlyTest(url);
     const urlStructure = await checkUrlStructure(url);
     const pageSpeed = await pageSpeedAPI(url);
+    const internalLinks = checkInternalLinks(hrefUrls)
+    const altTags = checkAltTags(imageUrls)
 
-    return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure, pageSpeed}
+    return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure, pageSpeed, internalLinks, altTags}
 };
 
 const frRange = [
