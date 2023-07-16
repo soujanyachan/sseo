@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
 const _ = require('lodash')
-const htmlParser = require('node-html-parser');
-const axios = require('axios')
 var bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const {seoToolsController} = require("./controllers/seo-tools");

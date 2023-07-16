@@ -2,21 +2,36 @@
 import React from 'react';
 import _ from 'lodash';
 import SerpPreview from 'react-serp-preview';
+import { Tag, Progress } from 'antd';
 
 // Component to display SEO score
-const SeoScore = ({score}) => <h2>SEO Score: {score}</h2>
+const SeoScore = ({score}) => {
+    const pc = Math.floor(score*10);
+    return (<div><h2>SEO Score</h2> <Progress type="circle" percent={pc} format={(percent) => `${percent}`} strokeColor={{
+        '0%': '#108ee9',
+        '100%': '#87d068',
+    }} size="small" style={{marginBottom: "10px"}} /></div>)
+}
 
 // Component for SERP preview
 const Serp = ({title = "", metaDescription = "", url}) => (
-    <SerpPreview title={title} metaDescription={metaDescription} url={url}/>
+    <div>
+        <h2>SERP Preview</h2>
+        <SerpPreview title={title} metaDescription={metaDescription} url={url}/>
+    </div>
 )
+
+const pickRandomColor = () => {
+    const colors = ["magenta", "red", "volcano", "orange", "gold", "lime", "green", "cyan", "blue", "geekblue", "purple"]
+    return colors[_.random(0, colors.length-1)];
+}
 
 // Component to display Keywords
 const Keywords = ({keywords}) => {
     return (
         <div>
-            <h1>Keywords:</h1>
-            {keywords.map((keyword, index) => <p key={index}>{keyword}</p>)}
+            <h2>Keywords:</h2>
+            {keywords.map((keyword, index) => <Tag key={index} color={`${pickRandomColor()}`}>{keyword}</Tag>)}
         </div>
     )
 }
@@ -25,8 +40,8 @@ const Keywords = ({keywords}) => {
 const AltKeywords = ({altKeywords}) => {
     return (
         <div>
-            <h1>Alternative Keywords:</h1>
-            {altKeywords.map((keyword, index) => <p key={index}>{keyword}</p>)}
+            <h2>Alternative Keywords:</h2>
+            {altKeywords.map((keyword, index) => <Tag key={index} color={`${pickRandomColor()}`}>{keyword}</Tag>)}
         </div>
     )
 }
@@ -34,9 +49,8 @@ const AltKeywords = ({altKeywords}) => {
 // Component to display PageSpeed
 const PageSpeed = ({speed}) => (
     <div>
-        <h1>Page Speed:</h1>
-        <h2>Loading experience {speed.loadingExperience}</h2>
-        <h2>Performance score {speed.performanceScore}</h2>
+        <p>Loading experience <Tag color={`${speed.loadingExperience === 'FAST' ? 'green' : 'red'}`}>{speed.loadingExperience}</Tag></p>
+        <p>Performance score <Tag color={`${speed.performanceScore >= 0.75 ? 'green' : 'red'}`}>{speed.performanceScore}</Tag></p>
     </div>
 );
 
@@ -48,14 +62,18 @@ const PageOpts = ({
                       isAscii,
                       containsUnderscores
                   }) => {
+    const yesGood = <Tag color={"green"}>yes</Tag>
+    const yesBad = <Tag color={"red"}>yes</Tag>
+    const noBad = <Tag color={"red"}>no</Tag>
+    const noGood = <Tag color={"green"}>no</Tag>
     return (
         <div>
-            <p>Does page have robots.txt ? {isRobotsTxt ? 'yes' : 'no'}  </p>
-            <p>Does head of the page contain title ? {doesHeadContainTitle ? 'yes' : 'no'}       </p>
-            <p>Does head of the page contain meta information ? {doesHeadContainMeta ? 'yes' : 'no'}    </p>
-            <p>Is the page mobile friendly ? {isMobileFriendly ? 'yes' : 'no'}          </p>
-            <p>Does the url contain non-standard characters ?
-                ascii {isAscii ? 'yes' : 'no'} underscores {containsUnderscores ? 'yes' : 'no'}   </p>
+            <p>Does page have robots.txt ? {isRobotsTxt ? yesGood : noBad}  </p>
+            <p>Does head of the page contain title ? {doesHeadContainTitle ? yesGood : noBad}       </p>
+            <p>Does head of the page contain meta information ? {doesHeadContainMeta ? yesGood : noBad}    </p>
+            <p>Is the page mobile friendly ? {isMobileFriendly ? yesGood : noBad}          </p>
+            <p>Does the url contain only ASCII characters ? {isAscii ? yesGood : noBad} </p>
+            <p>Does the url contain underscores? {containsUnderscores ? yesBad : noGood} </p>
         </div>
     )
 }
@@ -64,15 +82,15 @@ const PageOpts = ({
 const BlogPost = ({blogPosts}) => {
     return (
         <div>
-            <h1>Alternative Blog Text:</h1>
+            <h2>Alternative Blog Text:</h2>
             {blogPosts.map((blog, index) =>
-                <div key={index}><h2>{blog.title}</h2><p>{blog.text}</p></div>)}
+                <div key={index}><h3>{blog.title}</h3><p>{blog.text}</p></div>)}
         </div>
     )
 }
 
 // Component to display readability scores
-const Readability = ({readabilityScore, type}) => <h2>{type}: {readabilityScore}</h2>
+const Readability = ({readabilityScore, type}) => <p>{type}: {readabilityScore.toFixed(2)}</p>
 
 // Parent Component
 const SEOPage = ({url, seoData}) => {
@@ -94,13 +112,17 @@ const SEOPage = ({url, seoData}) => {
         const {fleschReadability, automatedReadabilityIndex} = analyseContent
         return (
             <div>
-                {/*<h1>url: {url}</h1>*/}
-                <SeoScore score={seoData.seoScore}/>
+                {/*<h2>url: {url}</h2>*/}
+                <SeoScore score={seoData.score}/>
                 <Serp title={serpPreview.title}
                       metaDescription={serpPreview.excerpt}
                       url={url}/>
+                <h2>Readability:</h2>
+                <Readability readabilityScore={fleschReadability} type={"Flesch Readability"}/>
+                <Readability readabilityScore={automatedReadabilityIndex} type={"Automated Readability Index"}/>
                 <Keywords keywords={keywords}/>
                 <AltKeywords altKeywords={alternateKeywords}/>
+                <h2>Optimisations needed:</h2>
                 <PageSpeed speed={pageSpeed}/>
                 <PageOpts isRobotsTxt={isRobotsTxt}
                           doesHeadContainTitle={doesHeadContainTitle}
@@ -109,8 +131,6 @@ const SEOPage = ({url, seoData}) => {
                           isAscii={isAscii}
                           containsUnderscores={containsUnderscores}/>
                 <BlogPost blogPosts={blogPosts}/>
-                <Readability readabilityScore={fleschReadability} type={"Flesch Readability"}/>
-                <Readability readabilityScore={automatedReadabilityIndex} type={"Automated Readability Index"}/>
             </div>
         )
     } else {

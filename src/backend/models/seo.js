@@ -1,29 +1,36 @@
 const nlp = require('compromise');
 nlp.plugin(require('compromise-speech'));
 const _ = require('lodash');
-const axios = require('axios');
 const {getKeywordsFromText} = require("./openai");
-const {googleMobileFriendlyTest, checkIsRobotsTxt, siteMap, checkUrlStructure, pageSpeedAPI} = require("./google");
+const {googleMobileFriendlyTest, checkIsRobotsTxt, checkUrlStructure, pageSpeedAPI} = require("./google");
 
-const analyseKeyword = async ({data, textData, root}) => {
+const analyseKeyword = async ({textData}) => {
     // call open ai apis to get keyword.
     const resp = await getKeywordsFromText({textData});
     return resp;
 };
 
-const optimisePage = async ({data, textData, root, url}) => {
+const optimisePage = async ({root, url}) => {
     const isRobotsTxt = await checkIsRobotsTxt(url)
     const doesHeadContainTitle = root.querySelector('head').structure.includes("title");
     const doesHeadContainMeta = root.querySelector('head').structure.includes("meta");
     const {isMobileFriendly} = await googleMobileFriendlyTest(url);
-    // const siteMapCheck = await siteMap(url)
     const urlStructure = await checkUrlStructure(url);
     const pageSpeed = await pageSpeedAPI(url);
 
     return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure, pageSpeed}
 };
 
-const analyseContent = async ({data, textData, root, title, excerpt}) => {
+const frRange = [
+    {min: 90, max: 100, text: 'Very Easy'},
+    {min: 80, max: 89, text: 'Easy'},
+    {min: 70, max: 79, text: 'Fairly Easy'},
+    {min: 60, max: 69, text: 'Standard'},
+    {min: 50, max: 59, text: 'Fairly Difficult'},
+    {min: 30, max: 49, text: 'Difficult'},
+    {min: 0, max: 29, text: 'Very Confusing'}]
+
+const analyseContent = async ({textData}) => {
     let doc = await nlp(textData);
     const totalNumOfWords = doc.wordCount();
     let totalNumOfSyllables = 0;
@@ -45,24 +52,19 @@ const analyseContent = async ({data, textData, root, title, excerpt}) => {
     const fleschReadability = 206.835 - (1.015 * avgSentenceLength) - (84.6 * avgSyllablesPerWord);
     const automatedReadabilityIndex = 4.71 * (totalNumOfChars / totalNumOfWords) + 0.5 * (totalNumOfWords / totalNumOfSentences) - 21.43;
     console.log(arr, avgSentenceLength, avgSyllablesPerWord, fleschReadability, automatedReadabilityIndex, "sentences");
-    return {fleschReadability, automatedReadabilityIndex}
+    const frText = _.filter(frRange, (x) => {
+        return (x.min <= fleschReadability && x.max >= fleschReadability);
+    }).text
+    return {fleschReadability, automatedReadabilityIndex, frText}
 };
 
-const seoScore = async ({data, textData, root}) => {
-};
-
-const serpPreview = async ({data, textData, root, title, excerpt}) => {
+const serpPreview = async ({title, excerpt}) => {
     return {title, excerpt}
-};
-
-const checkDomainAuthority = async ({data, textData, root}) => {
 };
 
 module.exports = {
     analyseKeyword,
     analyseContent,
-    checkDomainAuthority,
-    seoScore,
     serpPreview,
     optimisePage
 }

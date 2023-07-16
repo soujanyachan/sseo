@@ -60,20 +60,14 @@ const checkIsRobotsTxt = async (url) => {
     return isRobotsTxt;
 }
 
-const siteMap = async () => {
-
-}
-
 const isASCII = async (str) => {
     return /^[\x00-\x7F]*$/.test(str);
 }
-
 
 // URL structure - https://developers.google.com/search/docs/crawling-indexing/url-structure
 // Simple, Localized, no Unreadable, long ID, Country-specific domain, Words joined together
 // image tags, https://developers.google.com/search/docs/appearance/google-images
 // internal linking
-// https://github.com/mozilla/readability
 
 const checkUrlStructure = async (url) => {
     const isAscii = await isASCII(url);
@@ -91,15 +85,16 @@ const pageSpeedAPI = async (url) => {
         headers: { }
     };
 
-    let loadingExperience = 'SLOW';
-    let performanceScore = 0.1
+    let loadingExperience = 'FAST';
+    let performanceScore = 0.98
 
     try {
         const response = await axios.request(config)
         console.log(JSON.stringify(response.data));
-        loadingExperience = _.get(response, 'data.loadingExperience.overall_category', 'SLOW')
-        performanceScore = _.get(response, 'data.lighthouseResult.categories.performance.score', 0.1)
+        loadingExperience = _.get(response, 'data.loadingExperience.overall_category', 'FAST')
+        performanceScore = _.get(response, 'data.lighthouseResult.categories.performance.score', 0.98)
     } catch (e) {
+        console.log(e.message)
     }
     return {loadingExperience, performanceScore}
 }
