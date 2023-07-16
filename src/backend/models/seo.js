@@ -3,7 +3,7 @@ nlp.plugin(require('compromise-speech'));
 const _ = require('lodash');
 const axios = require('axios');
 const {getKeywordsFromText} = require("./openai");
-const {googleMobileFriendlyTest, checkIsRobotsTxt, siteMap, checkUrlStructure} = require("./google");
+const {googleMobileFriendlyTest, checkIsRobotsTxt, siteMap, checkUrlStructure, pageSpeedAPI} = require("./google");
 
 const analyseKeyword = async ({data, textData, root}) => {
     // call open ai apis to get keyword.
@@ -18,11 +18,12 @@ const optimisePage = async ({data, textData, root, url}) => {
     const {isMobileFriendly} = await googleMobileFriendlyTest(url);
     // const siteMapCheck = await siteMap(url)
     const urlStructure = await checkUrlStructure(url);
+    const pageSpeed = await pageSpeedAPI(url);
 
-    return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure}
+    return {isRobotsTxt, doesHeadContainTitle, doesHeadContainMeta, isMobileFriendly, ...urlStructure, pageSpeed}
 };
 
-const analyseContent = async ({data, textData, root}) => {
+const analyseContent = async ({data, textData, root, title, excerpt}) => {
     let doc = await nlp(textData);
     const totalNumOfWords = doc.wordCount();
     let totalNumOfSyllables = 0;
@@ -50,7 +51,8 @@ const analyseContent = async ({data, textData, root}) => {
 const seoScore = async ({data, textData, root}) => {
 };
 
-const serpPreview = async ({data, textData, root}) => {
+const serpPreview = async ({data, textData, root, title, excerpt}) => {
+    return {title, excerpt}
 };
 
 const checkDomainAuthority = async ({data, textData, root}) => {

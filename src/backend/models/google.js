@@ -91,12 +91,17 @@ const pageSpeedAPI = async (url) => {
         headers: { }
     };
 
+    let loadingExperience = 'SLOW';
+    let performanceScore = 0.1
+
     try {
         const response = await axios.request(config)
         console.log(JSON.stringify(response.data));
+        loadingExperience = _.get(response, 'data.loadingExperience.overall_category', 'SLOW')
+        performanceScore = _.get(response, 'data.lighthouseResult.categories.performance.score', 0.1)
     } catch (e) {
-
     }
+    return {loadingExperience, performanceScore}
 }
 
 module.exports = {

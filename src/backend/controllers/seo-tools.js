@@ -17,26 +17,31 @@ const allowedTypes = _.keys(typeFunctionMap);
 const getHTMLParsedDataFromUrl = async ({url}) => {
     const resp = await axios.get(url);
     const root = htmlParser.parse(resp.data);
-    return root;
+    return {root, plainHtml: resp.data};
 }
 
-const getTextDataFromHtml = async ({htmlRoot}) => {
-    const dummyText =
-        'The best things in an artist’s work are so much a matter of intuition, that there is much to be said for the point of view that would altogether discourage intellectual inquiry into artistic phenomena on the part of the artist. Intuitions are shy things and apt to disappear if looked into too closely. And there is undoubtedly a danger that too much knowledge and training may supplant the natural intuitive feeling of a student, leaving only a cold knowledge of the means of expression in its place. For the artist, if he has the right stuff in him ... ';
-    return dummyText;
+const getTextDataFromHtml = async ({htmlRoot, plainHtml}) => {
+    var { Readability } = require('@mozilla/readability');
+    var { JSDOM } = require('jsdom');
+    const doc = new JSDOM(plainHtml)
+    let reader = new Readability(doc.window.document);
+    let article = reader.parse();
+    const articleSampleText = _.filter(article.textContent.split('\n\n'), (x) => x);
+    console.log(article, "article")
+    return {textData: articleSampleText[0], title: article.title, excerpt: article.excerpt};
 }
 
 const seoToolsController = async ({data, type}) => {
     try {
         // get html data
         const url = _.get(data, 'body.url');
-        const root = await getHTMLParsedDataFromUrl({url});
-        const textData = await getTextDataFromHtml({root});
+        const {root, plainHtml} = await getHTMLParsedDataFromUrl({url});
+        const {textData, title, excerpt} = await getTextDataFromHtml({htmlRoot: root, plainHtml});
         // based on incoming req, apply transformations
         if (type === 'all') {
             const totalRes = {};
             for (const type in typeFunctionMap) {
-                const respData = await typeFunctionMap[type]({data, textData, root, url});
+                const respData = await typeFunctionMap[type]({data, textData, root, url, title, excerpt});
                 console.log(`type ${type}: ${JSON.stringify(respData)}`);
                 totalRes[type] = respData;
             }

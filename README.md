@@ -38,10 +38,3 @@ Format
   Source code zip file
   Video and demo of the project
   Project description with details on which task is executed
-
-
-https://www.peppercontent.io/peppertype-ai/
-https://www.copy.ai/bloggers
-https://serpapi.com/search-api
-https://stackoverflow.com/questions/68546858/extract-main-text-from-any-webpage-using-beautifulsoup-and-python
-https://moz.com/help/domain-overview/introduction#summary

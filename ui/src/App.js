@@ -1,15 +1,10 @@
-// import SerpPreview from 'react-serp-preview';
 import './App.css';
-import React, {useEffect, useState, createContext} from "react";
+import React, {useState} from "react";
 import {WebPage} from "./webpage";
-import {Redirect} from 'react-router-dom';
-import {seoDataContext} from "./context";
-import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-
+import _ from 'lodash';
 
 function App() {
-    let navigate = useNavigate();
     const [url, setURL] = useState("");
 
     const handleInputChange = (event) => {
@@ -49,7 +44,7 @@ function App() {
                 }}/>
                 <p>You entered: {url}</p>
             </div>
-            <WebPage seoData={seoData} url={url}/>
+            {url && !_.isEmpty(seoData) && <WebPage seoData={seoData} url={url}/>}
         </div>
     );
 }
