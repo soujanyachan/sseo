@@ -25,7 +25,7 @@ function App() {
                 />
                 <input type={"submit"} onClick={() => {
                     console.log("switch");
-                    const backendUrl = "http://localhost:3000/seo-tools/all";
+                    const backendUrl = `${process.env.BACKEND_URL || "http://localhost:3000"}/seo-tools/all`;
                     if (url) {
                         axios.post(backendUrl, {
                             headers: {
